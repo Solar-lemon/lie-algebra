@@ -161,7 +161,8 @@ classdef Orientations < handle
             if norm(a) > 1e-8
                 a = a/norm(a);
             end
-            phi = 2*acos(q(1));
+            q_1 = max(-1, min(1, q(1)));
+            phi = 2*acos(q_1);
         end
         
         function R = quatToRotation(q)
@@ -185,10 +186,14 @@ classdef Orientations < handle
             r_31 = R(3, 1);
             r_13 = R(1, 3);
             
-            eta = 1/2*sqrt(1 + trace(R));
-            epsilon_1 = sign(r_23 - r_32)*1/2*sqrt(1 + r_11 - r_22 - r_33);
-            epsilon_2 = sign(r_31 - r_13)*1/2*sqrt(1 - r_11 + r_22 - r_33);
-            epsilon_3 = sign(r_12 - r_21)*1/2*sqrt(1 - r_11 - r_22 + r_33);
+            eta = 1/2*sqrt(...
+                max(0, 1 + trace(R)));
+            epsilon_1 = sign(r_23 - r_32)*1/2*sqrt(...
+                max(0, 1 + r_11 - r_22 - r_33));
+            epsilon_2 = sign(r_31 - r_13)*1/2*sqrt(...
+                max(0, 1 - r_11 + r_22 - r_33));
+            epsilon_3 = sign(r_12 - r_21)*1/2*sqrt(...
+                max(0, 1 - r_11 - r_22 + r_33));
             
             q = [eta; epsilon_1; epsilon_2; epsilon_3];
         end
