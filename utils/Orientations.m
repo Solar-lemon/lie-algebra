@@ -21,6 +21,14 @@ classdef Orientations < handle
             matrix = (matrix - matrix.')/2;
         end
         
+        function isUnity = checkUnity(v)
+            isUnity = (abs(norm(v) - 1) < 1e-4);
+        end
+        
+        function v = correctUnity(v)
+            v = v/norm(v);
+        end
+        
         function matrix = basicRotation(axis, phi)
             % Suppose that the vehicle frame {v} is rotated from
             % the inertial frame {i} by theta with respect to X_AXIS.
@@ -142,6 +150,47 @@ classdef Orientations < handle
                 end
             end
             eulerAngles = [phi; theta; psi];
+        end
+        
+        function q = axisAngleToQuat(a, phi)
+            q = [cos(phi/2); sin(phi/2)*a];
+        end
+        
+        function [a, phi] = quatToAxisAngle(q)
+            a = q(2:4);
+            if norm(a) > 1e-8
+                a = a/norm(a);
+            end
+            phi = 2*acos(q(1));
+        end
+        
+        function R = quatToRotation(q)
+            % q: 4x1 (elements of a quaternion)
+            eta = q(1);
+            epsilon = q(2:4);
+            R = (eta^2 - epsilon.'*epsilon)*eye(3) + ...
+                2*epsilon*(epsilon.') - 2*eta*Orientations.hat(epsilon);
+        end
+        
+        function q = rotationToQuat(R)
+            % R: 3x3 matrix
+            r_11 = R(1, 1);
+            r_22 = R(2, 2);
+            r_33 = R(3, 3);
+            
+            r_12 = R(1, 2);
+            r_21 = R(2, 1);
+            r_23 = R(2, 3);
+            r_32 = R(3, 2);
+            r_31 = R(3, 1);
+            r_13 = R(1, 3);
+            
+            eta = 1/2*sqrt(1 + trace(R));
+            epsilon_1 = sign(r_23 - r_32)*1/2*sqrt(1 + r_11 - r_22 - r_33);
+            epsilon_2 = sign(r_31 - r_13)*1/2*sqrt(1 - r_11 + r_22 - r_33);
+            epsilon_3 = sign(r_12 - r_21)*1/2*sqrt(1 - r_11 - r_22 + r_33);
+            
+            q = [eta; epsilon_1; epsilon_2; epsilon_3];
         end
     end
 end

@@ -33,3 +33,29 @@ fprintf("Angle of rotation [deg]: \n")
 disp(rad2deg(phi))
 fprintf("Rotation matrix converted from the axis-angle: \n")
 disp(matrix2);
+
+fprintf("== Test for quaternion representation == \n")
+a = [1/2; 1/2; 1/sqrt(2)];
+phi = pi/3;
+q = Orientations.axisAngleToQuat(a, phi);
+R_quat = Orientations.quatToRotation(q);
+R_axis = Orientations.axisAngleToRotation(a, phi);
+q_re = Orientations.rotationToQuat(R_quat);
+[a_re, phi_re] = Orientations.quatToAxisAngle(q_re);
+
+fprintf("The axis of rotation: \n")
+disp(a.')
+fprintf("The angle of rotation: \n")
+disp(phi)
+fprintf("Quaternion: \n")
+disp(q.')
+fprintf("Rotation matrix converted from the quaternion: \n")
+disp(R_quat)
+fprintf("Rotation matrix converted from the axis-angle representation: \n")
+disp(R_axis)
+fprintf("Quaternion converted from the rotation matrix: \n")
+disp(q_re.')
+fprintf("The axis of rotation converted from the quaternion: \n")
+disp(a_re.')
+fprintf("The angle of rotation converted from the quaternion: \n")
+disp(phi_re)
