@@ -38,21 +38,23 @@ classdef Orientations < handle
             %           0, cos(theta), sin(theta);
             %           0, -sin(theta), cos(theta)];
             % and pos_{v} = R_{vi}*pos_{i}
+            c_phi = cos(phi);
+            s_phi = sin(phi);
             switch axis
                 case Orientations.X_AXIS
                     matrix = [...
                         1, 0, 0;
-                        0, cos(phi), sin(phi);
-                        0, -sin(phi), cos(phi)];
+                        0, c_phi, s_phi;
+                        0, -s_phi, c_phi];
                 case Orientations.Y_AXIS
                     matrix = [...
-                        cos(phi), 0, -sin(phi);
+                        c_phi, 0, -s_phi;
                         0, 1, 0;
-                        sin(phi), 0, cos(phi)];
+                        s_phi, 0, c_phi];
                 case Orientations.Z_AXIS
                     matrix = [...
-                        cos(phi), sin(phi), 0;
-                        -sin(phi), cos(phi), 0;
+                        c_phi, s_phi, 0;
+                        -s_phi, c_phi, 0;
                         0, 0, 1];
             end
         end
@@ -110,18 +112,25 @@ classdef Orientations < handle
                     theta = varargin{2};
                     psi   = varargin{3};
             end
+            s_phi = sin(phi);
+            c_phi = cos(phi);
+            s_theta = sin(theta);
+            c_theta = cos(theta);
+            s_psi = sin(psi);
+            c_psi = cos(psi);
+            
             R_psi = [...
-                cos(psi), sin(psi), 0;
-                -sin(psi), cos(psi), 0;
+                c_psi, s_psi, 0;
+                -s_psi, c_psi, 0;
                 0, 0, 1];
             R_theta = [...
-                cos(theta), 0, -sin(theta);
+                c_theta, 0, -s_theta;
                 0, 1, 0;
-                sin(theta), 0, cos(theta)];
+                s_theta, 0, c_theta];
             R_phi = [...
                 1, 0, 0;
-                0, cos(phi), sin(phi);
-                0, -sin(phi), cos(phi)];
+                0, c_phi, s_phi;
+                0, -s_phi, c_phi];
             matrix = R_phi*R_theta*R_psi;
         end
         
